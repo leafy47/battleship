@@ -4,9 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "pretty": "prettier . --write"
+    "pretty": "prettier . --write",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
