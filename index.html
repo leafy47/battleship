@@ -1,11 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battleship Game</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <script src="main.js"></script>
+  <div class="container">
+    <h1>Battleship Game</h1>
+    <div class="game-boards">
+      <div id="player-board">
+        <!-- Your Player's Game Board -->
+        
+      </div>
+      <div id="opponent-board">
+        <!-- Opponent's Game Board -->
+      </div>
+    </div>
+    <div class="console-control">
+      <!-- Console and Control Area -->
+      <div class="player-ships">
+        <p>Battleship: <span id="pbattleship">Afloat</span></p>
+        <p>Submarine: <span id="psubmarine">Afloat</span></p>
+        <p>Cruiser: <span id="pcruiser">Afloat</span></p>
+        <p>Gunboat: <span id="pgunboat">Afloat</span></p>
+      </div>
+      <div>
+        <h1 class="game-status">Battle Underway</h2>
+        <button id="reset">Reset game</button>
+      </div>
+      <div class="enemy-ships">
+        <p>Battleship: <span id="obattleship">Afloat</span></p>
+        <p>Submarine: <span id="osubmarine">Afloat</span></p>
+        <p>Cruiser: <span id="ocruiser">Afloat</span></p>
+        <p>Gunboat: <span id="ogunboat">Afloat</span></p>
+      </div>
+    </div>
+  </div>
+  <script src="main.js"></script>
 </body>
 </html>
+
+
+
+
