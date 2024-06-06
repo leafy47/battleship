@@ -1,89 +1,164 @@
-function Ship() {
-    const battleship = {
-        health: 4,
-        length: 4,
-        sunk: false
-    }
+import {Ship, Player, Gameboard} from './logic';
 
-    const submarine = {
-        health: 3,
-        length: 3,
-        sunk: false
-    }
+// Get the player board container
+const playerBoardContainer = document.getElementById('player-board');
+const opponentBoardContainer = document.getElementById('opponent-board');
 
-    const cruiser = {
-        health: 2,
-        length: 2,
-        sunk: false
-    }
+const obattleship = document.querySelector('#obattleship');
+const osubmarine = document.querySelector('#osubmarine');
+const ocruiser = document.querySelector('#ocruiser');
+const ogunboat = document.querySelector('#ogunboat');
 
-    const gunship = {
-        health: 1,
-        length: 1,
-        sunk: false
-    }
+const pbattleship = document.querySelector('#pbattleship');
+const psubmarine = document.querySelector('#psubmarine');
+const pcruiser = document.querySelector('#pcruiser');
+const pgunboat = document.querySelector('#pgunboat');
+const status = document.querySelector('.game-status');
 
-    const hit = (boat) => {
-        boat.health = boat.health - 1;
-        if(boat.health === 0) boat.sunk = true;
-        return boat.health;
-    }
-
-    return {battleship, submarine, cruiser, gunship, hit};
+function checkSunk(boat, field) {
+  if(boat.sunk === true) field.textContent = 'Sunk!';
 }
 
-function rando(x) {
-    return Math.floor(Math.random() * (x + 1));
-}
+function checkVictory() {
 
-function randomPlace (x) {
-    if(rando(1) === 1) {
-        let xaxis = rando(8 - x);
-        let yaxis = rando(8);
-        for(i = 0; i < x; i++) {
-            grid[xaxis + i][yaxis] = 1;
+  if(playerone.ship.state.totalhealth === 0) {
+    status.textContent = "CPU Wins";
+    const cellElements = document.querySelectorAll('.cell');
+    cellElements.forEach((element) => {
+    const clone = element.cloneNode(true);
+    element.parentNode.replaceChild(clone, element);
+});
+  }
+  if(cpuplayer.ship.state.totalhealth === 0) {
+    status.textContent = "Player Wins";
+    const cellElements = document.querySelectorAll('.cell');
+    cellElements.forEach((element) => {
+    const clone = element.cloneNode(true);
+    element.parentNode.replaceChild(clone, element);
+});
+}}
+
+// Create a div container for the game board
+function display() {
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const cell = document.querySelector(`#p${row}${col}`);
+      if(playerone.board.grid[row][col] !== 0) {
+        switch(playerone.board.grid[row][col]) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+            cell.style.backgroundColor = 'pink';
+            break;
+          case 5:
+            cell.style.backgroundColor = 'red';
+            break;
+          case 6:
+            cell.style.backgroundColor = 'black';
+            break;           
+          default:
+            console.log("Error");
         }
-    } else {
-        let xaxis = rando(8);
-        let yaxis = rando(8 - x);
-        for(i = 0; i < x; i++) {
-            grid[xaxis][yaxis + i] = 1;
-        }
-    } 
-}
-
-
-
-function Gameboard() {
-    const grid = Array.from({ length: 8 }, () => Array(8).fill(0));
-
-    const place = (ship) => {
-        // places battleship
-        if(rando(1) === 1) {
-            let xaxis = rando(8 - ship.battleship.length);
-            let yaxis = rando(8);
-            console.log(rando(8 - ship.battleship.length))
-            for(i = 0; i < ship.battleship.length; i++) {
-                grid[xaxis + i][yaxis] = 1;
-            }
-        } else {
-            let xaxis = rando(8);
-            let yaxis = rando(8 - ship.battleship.length);
-            console.log(rando(8 - ship.battleship.length))
-            for(i = 0; i < ship.battleship.length; i++) {
-                grid[xaxis][yaxis + i] = 1;
-            }
-        } 
+      }
     }
+  }
 
-    return {grid, place};
+
+  checkSunk(playerone.ship.battleship, pbattleship);
+  checkSunk(playerone.ship.submarine, psubmarine);
+  checkSunk(playerone.ship.cruiser, pcruiser);
+  checkSunk(playerone.ship.gunship, pgunboat);
+
+  checkSunk(cpuplayer.ship.battleship, obattleship);
+  checkSunk(cpuplayer.ship.submarine, osubmarine);
+  checkSunk(cpuplayer.ship.cruiser, ocruiser);
+  checkSunk(cpuplayer.ship.gunship, ogunboat);
+
+  checkVictory();
 }
 
-const jimmy = new Ship();
-const travis = new Gameboard();
-travis.place(jimmy);
-console.log(travis.grid);
 
 
-module.exports = Ship;
+// Loop through rows and columns to create cells
+function createBoards (x) {
+  const boardContainer = document.createElement('div');
+  boardContainer.classList.add('board');
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.textContent = `${row}${col}`; // You can replace this with your desired content
+      cell.id = `${x}${row}${col}`;
+      boardContainer.appendChild(cell);
+      if (x === 'o') {
+        const handleCellClick = () => {
+          cell.style.backgroundColor = 'black';
+          cpuplayer.board.receiveAttack(cpuplayer.ship, cpuplayer.board, [`${row}`, `${col}`]);
+          if (cpuplayer.board.grid[`${row}`][`${col}`] === 5) cell.style.backgroundColor = 'green';
+          // let rand1 = getRandomInt(0, 7);
+          // let rand2 = getRandomInt(0, 7);
+          let rand1;
+          let rand2;
+          do {
+            rand1 = getRandomInt(0, 7);
+            rand2 = getRandomInt(0, 7);
+          } while (playerone.board.grid[rand1][rand2] > 4)
+          // Need to fix random integer logic, cannot select coordinate that is already hit
+          playerone.board.receiveAttack(playerone.ship, playerone.board, [rand1, rand2]);
+          display();
+          cell.removeEventListener('click', handleCellClick);
+        };
+        cell.addEventListener('click', handleCellClick);
+      }
 
+    }
+  }
+  return boardContainer;
+}
+
+
+// Append the board container to the player board div
+playerBoardContainer.appendChild(createBoards('p'));
+opponentBoardContainer.appendChild(createBoards('o'));
+
+let playerone = new Player();
+let cpuplayer = new Player();
+
+playerone.board.place(playerone.ship, playerone.board);
+console.log(playerone.board.grid);
+cpuplayer.board.place(cpuplayer.ship, cpuplayer.board);
+console.log(cpuplayer.board.grid);
+
+
+
+
+display();
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function reset() {
+  playerBoardContainer.innerHTML = '';
+  opponentBoardContainer.innerHTML = '';
+  playerone = new Player();
+  cpuplayer = new Player();
+  playerBoardContainer.appendChild(createBoards('p'));
+  opponentBoardContainer.appendChild(createBoards('o'));
+  playerone.board.place(playerone.ship, playerone.board);
+  cpuplayer.board.place(cpuplayer.ship, cpuplayer.board);
+  display();
+  obattleship.textContent = 'Afloat';
+  osubmarine.textContent = 'Afloat';
+  ocruiser.textContent = 'Afloat';
+  ogunboat.textContent= 'Afloat';
+  pbattleship.textContent = 'Afloat';
+  psubmarine.textContent = 'Afloat';
+  pcruiser.textContent = 'Afloat';
+  pgunboat.textContent= 'Afloat';
+  status.textContent = 'Battle underway';
+}
+
+const button = document.querySelector('#reset');
+button.addEventListener('click', reset);
